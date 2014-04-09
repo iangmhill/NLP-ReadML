@@ -21,11 +21,11 @@ def openFile(filename):
     
 def readFile(filename):
     ''' returns dictionary representing sentences/categories in filename
-        input: filename
+        input: filename - 
         output: dictionary, key=statement & value=1/0
     '''
     ds = openFile(filename) # data string
-    dl = re.split('\n', ds) # data list, with each entry a 'question***1' string
+    dl = re.split('\n', ds) # data list, with each entry a 'question,1' string
     res = {}
     for line in dl:
         temp = re.split(',', line)
@@ -67,7 +67,7 @@ def parseQuestions():
     res = {}
     for line in ql:
         sp = ['\r', '\n']
-        rem = [',', '.']
+        rem = [',', '.', "'"]
         for char in sp:
             line = line.replace(char, ' ')
         for char in rem:
@@ -87,7 +87,7 @@ def parseBooks(books): # books of format ['book1.txt', 'book2.txt']
         sentenceList = re.split("(?<=[\.?!])\W",text)
         for sentence in sentenceList:
             sp = ['\r', '\n']
-            rem = [',', '.']
+            rem = [',', '.', "'"]
             for char in sp:
                 sentence = sentence.replace(char, ' ')
             for char in rem:
