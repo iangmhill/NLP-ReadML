@@ -10,6 +10,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 data = pd.read_csv("trainingData.csv")
 data = data[0:100]
 
+#print data
 questionValues = data["Question"].values
 text = data["Text"].values
 
@@ -20,10 +21,8 @@ featureExtractor.fit_transform(list(data["Text"]))
 
 textTFIDF = featureExtractor.transform(list(data["Text"]))
 
-textFeaturesPerf = np.zeros((100))
-
 test_categories, train_categories, test_questions, train_questions = train_test_split(
-textTFIDF, questionValues, random_state=iter)
+    textTFIDF, questionValues)
 
 model = Ridge()
 
@@ -31,4 +30,6 @@ print "Fitting the Model"
 
 model.fit(train_categories, train_questions)
 output = model.predict(test_categories)
-textFeaturesPerf[iter] = mean_absolute_error(test_questions, output)
+textFeaturesPerf = mean_absolute_error(test_questions, output)
+
+print textFeaturesPerf
