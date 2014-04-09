@@ -67,7 +67,7 @@ def parseQuestions():
     res = {}
     for line in ql:
         sp = ['\r', '\n']
-        rem = [',', '.', "'"]
+        rem = [',', '.', "'", '"']
         for char in sp:
             line = line.replace(char, ' ')
         for char in rem:
@@ -87,7 +87,7 @@ def parseBooks(books): # books of format ['book1.txt', 'book2.txt']
         sentenceList = re.split("(?<=[\.?!])\W",text)
         for sentence in sentenceList:
             sp = ['\r', '\n']
-            rem = [',', '.', "'"]
+            rem = [',', '.', "'", '"']
             for char in sp:
                 sentence = sentence.replace(char, ' ')
             for char in rem:
