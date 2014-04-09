@@ -6,6 +6,7 @@ Created on Wed Mar 26 17:32:32 2014
 """
 
 import re
+import string
 
 ### FILE HANDLING METHODS
 
@@ -73,6 +74,7 @@ def parseQuestions():
         for char in rem:
             line = line.replace(char, '')
         line = line.strip()
+        filter(lambda x: x in string.printable, line)
         space = line.find(' ')
         qmark = line.find('?')
         if qmark != -1:
@@ -93,7 +95,7 @@ def parseBooks(books): # books of format ['book1.txt', 'book2.txt']
             for char in rem:
                 sentence = sentence.replace(char, '')
             sentence = sentence.strip()
-            print sentence
+            filter(lambda x: x in string.printable, sentence)
             if len(sentence) > 0:
                 if sentence[-1] == '?':
                     res[sentence] = 1
