@@ -3,14 +3,15 @@ import numpy as np
 from scipy.sparse import hstack
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.cross_validation import train_test_split
+from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import Ridge
-from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import accuracy_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 data = pd.read_csv("trainingData.csv")
-data = data[0:100]
+#data = data[0:1000]
 
-#print data
+# print data
 questionValues = data["Question"].values
 text = data["Text"].values
 
@@ -21,15 +22,19 @@ featureExtractor.fit_transform(list(data["Text"]))
 
 textTFIDF = featureExtractor.transform(list(data["Text"]))
 
-test_categories, train_categories, test_questions, train_questions = train_test_split(
+train_categories, test_categories, train_questions, test_questions = train_test_split(
     textTFIDF, questionValues)
 
-model = Ridge()
+print train_questions.mean()
+print test_questions.mean()
+
+model = LogisticRegression(C=1)
 
 print "Fitting the Model"
 
 model.fit(train_categories, train_questions)
 output = model.predict(test_categories)
-textFeaturesPerf = mean_absolute_error(test_questions, output)
+print output
+textFeaturesPerf = accuracy_score(test_questions, output)
 
 print textFeaturesPerf
