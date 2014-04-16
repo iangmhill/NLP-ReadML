@@ -6,6 +6,7 @@ Created on Wed Mar 26 17:32:32 2014
 """
 
 import re
+import string
 
 ### FILE HANDLING METHODS
 
@@ -21,14 +22,14 @@ def openFile(filename):
     
 def readFile(filename):
     ''' returns dictionary representing sentences/categories in filename
-        input: filename
+        input: filename - 
         output: dictionary, key=statement & value=1/0
     '''
     ds = openFile(filename) # data string
-    dl = re.split('\n', ds) # data list, with each entry a 'question***1' string
+    dl = re.split('\n', ds) # data list, with each entry a 'question,1' string
     res = {}
     for line in dl:
-        temp = re.split('\*\*\*', line)
+        temp = re.split(',', line)
         if len(temp) > 1:
             res[temp[0]] = temp[1] # key is sentence, value is categorization
     return res
@@ -40,7 +41,7 @@ def writeFile(dictionary, filename):
     '''
     res = ''
     for key in dictionary:
-        res += key + '***' + str(dictionary[key]) + '\n' # specified format
+        res += key + ',' + str(dictionary[key]) + '\n' # specified format
     f = open(filename, 'w+')
     f.write(res)
     f.close()
@@ -66,6 +67,14 @@ def parseQuestions():
     ql = re.split('\n', qs)
     res = {}
     for line in ql:
+        sp = ['\r', '\n']
+        rem = [',', '.', "'", '"']
+        for char in sp:
+            line = line.replace(char, ' ')
+        for char in rem:
+            line = line.replace(char, '')
+        line = line.strip()
+        filter(lambda x: x in string.printable, line)
         space = line.find(' ')
         qmark = line.find('?')
         if qmark != -1:
@@ -79,19 +88,26 @@ def parseBooks(books): # books of format ['book1.txt', 'book2.txt']
         text = clean(openFile(book))
         sentenceList = re.split("(?<=[\.?!])\W",text)
         for sentence in sentenceList:
-            text = sentence.strip().replace('\r', '').replace('\n', '')
-            if len(text) > 0:
-                if text[-1] == '?':
-                    res[text] = 1
+            sp = ['\r', '\n']
+            rem = [',', '.', "'", '"']
+            for char in sp:
+                sentence = sentence.replace(char, ' ')
+            for char in rem:
+                sentence = sentence.replace(char, '')
+            sentence = sentence.strip()
+            filter(lambda x: x in string.printable, sentence)
+            if len(sentence) > 0:
+                if sentence[-1] == '?':
+                    res[sentence] = 1
                 else:
-                    res[text] = 0
+                    res[sentence] = 0
     return res
-
+    
 
 ### DATA STORAGE METHOD
-    
 def build(filename):
-    d = readFile('trainingData.txt')
+    #d = readFile('trainingData.txt')
+    d = {}
     q = parseQuestions()
     b = parseBooks(['book1.txt'])
     for sentence in q:
@@ -99,14 +115,15 @@ def build(filename):
             d[sentence] = q[sentence]
     for sentence in b:
         if sentence not in d:
-            d[sentence] = q[sentence]
+            d[sentence] = b[sentence]
     writeFile(d, filename)
+    return d
     
 
 ### MAIN METHOD
 
 if __name__ == '__main__':
-    #build('trainingData.txt')
+    build('trainingData.txt')
     f = readFile('trainingData.txt')
     
     questions = []
